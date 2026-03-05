@@ -32,6 +32,8 @@ export async function GET() {
 }
 
 function generateMockTokens() {
+  // Use deterministic data with seeded random to avoid hydration mismatch
+  const seed = 12345;
   const names = [
     ["PEPE SOLANA", "PEPESOL", "The original Pepe on Solana. Community driven."],
     ["BONK INU", "BONKINU", "The dog coin of Solana. Much wow, very bonk."],
@@ -50,23 +52,29 @@ function generateMockTokens() {
     ["DIAMOND HANDS", "DIAM", "Never sell. Diamond hands forever."],
   ];
 
+  // Deterministic random based on index
+  const pseudoRandom = (index: number) => {
+    const x = Math.sin(seed + index) * 10000;
+    return x - Math.floor(x);
+  };
+
   return names.map(([name, symbol, description], i) => ({
-    mint: `${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`,
+    mint: `token${String(i).padStart(2, "0")}${`0`.repeat(30)}`,
     name,
     symbol,
     description,
     image_uri: `https://picsum.photos/seed/${symbol}/200/200`,
-    created_timestamp: Date.now() - i * 1000 * 60 * (Math.random() * 10 + 1),
-    creator: `${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`,
-    market_cap: Math.random() * 500000,
-    usd_market_cap: Math.random() * 500000,
-    complete: Math.random() > 0.8,
-    twitter: Math.random() > 0.5 ? `https://twitter.com/${symbol.toLowerCase()}` : null,
-    telegram: Math.random() > 0.6 ? `https://t.me/${symbol.toLowerCase()}` : null,
-    website: Math.random() > 0.7 ? `https://${symbol.toLowerCase()}.io` : null,
-    reply_count: Math.floor(Math.random() * 500),
-    virtual_sol_reserves: Math.random() * 100,
-    virtual_token_reserves: Math.random() * 1000000000,
-    king_of_the_hill_timestamp: Math.random() > 0.9 ? Date.now() - Math.random() * 1000 * 60 * 60 : null,
+    created_timestamp: 1700000000000 - i * 1000 * 60 * 10,
+    creator: `creator${String(i).padStart(2, "0")}${`0`.repeat(26)}`,
+    market_cap: Math.floor(pseudoRandom(i) * 500000),
+    usd_market_cap: Math.floor(pseudoRandom(i + 100) * 500000),
+    complete: i % 5 === 0,
+    twitter: i % 2 === 0 ? `https://twitter.com/${symbol.toLowerCase()}` : null,
+    telegram: i % 3 === 0 ? `https://t.me/${symbol.toLowerCase()}` : null,
+    website: i % 4 === 0 ? `https://${symbol.toLowerCase()}.io` : null,
+    reply_count: Math.floor(pseudoRandom(i + 200) * 500),
+    virtual_sol_reserves: Math.floor(pseudoRandom(i + 300) * 100),
+    virtual_token_reserves: Math.floor(pseudoRandom(i + 400) * 1000000000),
+    king_of_the_hill_timestamp: i === 0 ? 1700000000000 - 1000 * 60 * 10 : null,
   }));
 }

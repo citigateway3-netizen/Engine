@@ -32,6 +32,7 @@ The project has been transformed from a Next.js starter template into a full AI 
 - [x] Created main dashboard page with split-panel layout
 - [x] TypeScript: 0 errors
 - [x] ESLint: 0 errors, 0 warnings
+- [x] Fixed hydration error in `/api/tokens/route.ts` - replaced non-deterministic `Math.random()` and `Date.now()` with deterministic seeded values
 
 ## Current Structure
 
