@@ -3,6 +3,7 @@
 import { useState } from "react";
 import AgentChat from "@/components/AgentChat";
 import TokenFeed from "@/components/TokenFeed";
+import { MonitoredPoolsFeed } from "@/components/MonitoredPoolsFeed";
 import { Token } from "@/components/TokenCard";
 import {
   Bot,
@@ -13,9 +14,10 @@ import {
   ChevronRight,
   Activity,
   Zap,
+  Radio,
 } from "lucide-react";
 
-type ActivePanel = "feed" | "agent";
+type ActivePanel = "feed" | "pools" | "agent";
 type AgentType = "workflow" | "code" | "research";
 
 export default function Home() {
@@ -88,6 +90,17 @@ Please provide a comprehensive risk assessment and trading analysis.`;
               Feed
             </button>
             <button
+              onClick={() => setActivePanel("pools")}
+              className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-all ${
+                activePanel === "pools"
+                  ? "bg-blue-600/20 text-blue-400 border border-blue-600/30"
+                  : "text-gray-500"
+              }`}
+            >
+              <Radio size={10} />
+              Pools
+            </button>
+            <button
               onClick={() => setActivePanel("agent")}
               className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-all ${
                 activePanel === "agent"
@@ -107,6 +120,12 @@ Please provide a comprehensive risk assessment and trading analysis.`;
             icon={<Rocket size={10} />}
             label="pump.fun Live"
             color="green"
+          />
+          <ChevronRight size={10} className="text-gray-700 flex-shrink-0" />
+          <FeaturePill
+            icon={<Radio size={10} />}
+            label="Pool Monitor"
+            color="blue"
           />
           <ChevronRight size={10} className="text-gray-700 flex-shrink-0" />
           <FeaturePill
@@ -137,13 +156,17 @@ Please provide a comprehensive risk assessment and trading analysis.`;
 
       {/* Main Content */}
       <main className="flex-1 flex overflow-hidden">
-        {/* Left Panel: Token Feed */}
+        {/* Left Panel: Token Feed / Pools */}
         <div
           className={`${
-            activePanel === "feed" ? "flex" : "hidden"
+            activePanel === "feed" || activePanel === "pools" ? "flex" : "hidden"
           } md:flex flex-col w-full md:w-[420px] lg:w-[480px] border-r border-gray-800 flex-shrink-0 overflow-hidden`}
         >
-          <TokenFeed onAnalyzeToken={handleAnalyzeToken} />
+          {activePanel === "feed" ? (
+            <TokenFeed onAnalyzeToken={handleAnalyzeToken} />
+          ) : (
+            <MonitoredPoolsFeed />
+          )}
         </div>
 
         {/* Right Panel: AI Agent */}
@@ -204,15 +227,19 @@ Please provide a comprehensive risk assessment and trading analysis.`;
               pump.fun API
             </span>
             <span className="flex items-center gap-1">
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+              WebSocket Monitoring
+            </span>
+            <span className="flex items-center gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-purple-400" />
               Vercel AI SDK
             </span>
             <span className="flex items-center gap-1">
-              <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+              <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
               Convex Agent
             </span>
           </div>
-          <span>Built with Next.js 16 + Tailwind CSS 4</span>
+          <span>Built with Next.js 16 + Tailwind CSS 4 + Helius RPC</span>
         </div>
       </footer>
     </div>

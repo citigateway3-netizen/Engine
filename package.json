@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "monitor": "NODE_OPTIONS='--loader ts-node/esm' node --experimental-modules scripts/pool-monitor.ts",
+    "monitor:meteora": "NODE_OPTIONS='--loader ts-node/esm' node --experimental-modules scripts/meteora-monitor.ts",
+    "monitor:raydium": "NODE_OPTIONS='--loader ts-node/esm' node --experimental-modules scripts/raydium-monitor.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.58",
@@ -22,7 +25,8 @@
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-markdown": "^10.1.0",
-    "react-syntax-highlighter": "^16.1.1"
+    "react-syntax-highlighter": "^16.1.1",
+    "ws": "^8.17.0"
   },
   "devDependencies": {
     "typescript": "^5.9.3",

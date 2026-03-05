@@ -32,6 +32,29 @@ export default defineSchema({
     .index("by_created", ["createdTimestamp"])
     .index("by_mint", ["mint"]),
 
+  // Monitored pools from Meteora and Raydium
+  monitoredPools: defineTable({
+    type: v.union(v.literal("meteora"), v.literal("raydium")),
+    signature: v.string(),
+    creator: v.string(),
+    poolAddress: v.optional(v.string()),
+    mint: v.optional(v.string()),
+    timestamp: v.number(),
+    discovered: v.number(),
+    syncedAt: v.number(),
+    metadata: v.optional(
+      v.object({
+        name: v.optional(v.string()),
+        symbol: v.optional(v.string()),
+        decimals: v.optional(v.number()),
+        image: v.optional(v.string()),
+      })
+    ),
+  })
+    .index("by_signature", ["signature"])
+    .index("by_discovered", ["discovered"])
+    .index("by_type", ["type"]),
+
   // Agent sessions/threads
   agentSessions: defineTable({
     sessionId: v.string(),
