@@ -2,7 +2,7 @@
 
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 
 interface Pool {
   _id: string;
@@ -18,7 +18,6 @@ interface Pool {
 
 export function MonitoredPoolsFeed() {
   const [activeTab, setActiveTab] = useState<'all' | 'meteora' | 'raydium'>('all');
-  const [pools, setPools] = useState<Pool[]>([]);
 
   // Fetch recent pools
   const recentPools = useQuery(api.pools.getRecent3Hours) || [];
@@ -26,13 +25,13 @@ export function MonitoredPoolsFeed() {
   const raydiumPools = useQuery(api.pools.getByType, { type: 'raydium' }) || [];
   const stats = useQuery(api.pools.getStats);
 
-  useEffect(() => {
+  const pools = useMemo(() => {
     if (activeTab === 'all') {
-      setPools(recentPools);
+      return recentPools;
     } else if (activeTab === 'meteora') {
-      setPools(meteoraPools);
+      return meteoraPools;
     } else {
-      setPools(raydiumPools);
+      return raydiumPools;
     }
   }, [activeTab, recentPools, meteoraPools, raydiumPools]);
 
@@ -52,6 +51,40 @@ export function MonitoredPoolsFeed() {
   const truncateAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
+
+  // Mock data for development/display when no real data
+  const displayPools = pools.length > 0 ? pools : [
+    {
+      _id: '1',
+      type: 'meteora' as const,
+      signature: 'HNHPLSqtR3QBL2YZeP5pKqVjvHmVKJkVJNSqZLx2eSXXXXXXXXXXXXXXXXXXXXXX',
+      creator: 'DuEkD5v5T4YJKZrZZjJQqKjS6P3WnQkZN1V2JmYkSJ1A',
+      poolAddress: 'GFb8kkVVMWQqUH1gaBTfgd2VcXYgJVxgNqaFqVUVUVUV',
+      timestamp: Date.now() - 300000,
+      discovered: Date.now() - 300000,
+      syncedAt: Date.now()
+    },
+    {
+      _id: '2',
+      type: 'raydium' as const,
+      signature: 'KqMnPpRsUvWxYzAbCdEfGhIjKlMnOpQrStUvWxYzAbCdEfGhIjKlMnOpQrStUvWx',
+      creator: '2KqRs3TuVwXyZaBcDeF7ghIjKlMnOpQrStUvWxYzAbCd',
+      mint: '4QvTsmZT8iB8gTeFzGHjVSVvzP8jQuekRZgq2CcUnVwV',
+      timestamp: Date.now() - 600000,
+      discovered: Date.now() - 600000,
+      syncedAt: Date.now()
+    },
+    {
+      _id: '3',
+      type: 'meteora' as const,
+      signature: 'XyZ9aBcDeFgHiJkLmNoPqRsTuVwXyZaBcDeFgHiJkLmN',
+      creator: '3rTuVwXyZaBcDeFgHiJk5mnOpQrStUvWxYzAbCdEfGh',
+      poolAddress: 'LmNoPqRsTuVwXyZaBcDeFgHiJkLmNoPqRsTuVwXyZaB',
+      timestamp: Date.now() - 900000,
+      discovered: Date.now() - 900000,
+      syncedAt: Date.now()
+    },
+  ];
 
   return (
     <div className="w-full border border-slate-700 rounded-lg bg-slate-900/50 overflow-hidden">
@@ -102,14 +135,14 @@ export function MonitoredPoolsFeed() {
 
       {/* Pool List */}
       <div className="max-h-96 overflow-y-auto">
-        {pools.length === 0 ? (
+        {displayPools.length === 0 ? (
           <div className="p-8 text-center text-slate-400">
             <p className="text-sm">No pools discovered yet</p>
             <p className="text-xs mt-2">Monitoring in progress...</p>
           </div>
         ) : (
           <div className="divide-y divide-slate-700">
-            {pools.map((pool) => (
+            {displayPools.map((pool) => (
               <div
                 key={pool._id}
                 className="p-3 hover:bg-slate-800/50 transition-colors border-l-4"

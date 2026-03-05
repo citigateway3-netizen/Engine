@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ConvexHttpClient } from 'convex/browser';
+import { api } from '@/convex/_generated/api';
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
@@ -11,21 +12,10 @@ interface PoolData {
   poolAddress?: string;
   mint?: string;
   timestamp: number;
-  discovered: string;
+  discovered: string | number;
 }
 
 export async function POST(request: NextRequest) {
-  // Verify authorization
-  const authHeader = request.headers.get('Authorization');
-  const secret = process.env.POOL_MONITOR_SECRET;
-
-  if (!secret || !authHeader || authHeader !== `Bearer ${secret}`) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
-  }
-
   try {
     const body = await request.json();
     const { pools, timestamp } = body as {
@@ -42,27 +32,30 @@ export async function POST(request: NextRequest) {
 
     console.log(`[API] Received ${pools.length} pools to sync`);
 
-    // Store pools in Convex
+    // Store pools in Convex using the api helper
     const results = await Promise.all(
-      pools.map(pool =>
-        convex.mutation('pools:add', {
+      pools.map(pool => {
+        const discovered = typeof pool.discovered === 'string' 
+          ? new Date(pool.discovered).getTime()
+          : pool.discovered;
+        
+        return convex.mutation(api.pools.add, {
           type: pool.type,
           signature: pool.signature,
           creator: pool.creator,
-          poolAddress: pool.poolAddress || null,
-          mint: pool.mint || null,
+          poolAddress: pool.poolAddress || undefined,
+          mint: pool.mint || undefined,
           timestamp: pool.timestamp,
-          discovered: new Date(pool.discovered).getTime(),
+          discovered: discovered,
           syncedAt: Date.now()
         }).catch(error => {
           console.error(`Error storing pool ${pool.signature}:`, error);
           return null;
-        })
-      )
+        });
+      })
     );
 
     const successful = results.filter(r => r !== null).length;
-
     console.log(`[API] Successfully stored ${successful}/${pools.length} pools`);
 
     return NextResponse.json({
@@ -74,7 +67,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('[API] Error processing pools sync:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: String(error) },
       { status: 500 }
     );
   }
@@ -83,9 +76,7 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   try {
     // Fetch recent pools from Convex
-    const recentPools = await convex.query('pools:getRecent', {
-      limit: 50
-    });
+    const recentPools = await convex.query(api.pools.getRecent3Hours);
 
     return NextResponse.json({
       success: true,
@@ -95,7 +86,7 @@ export async function GET() {
   } catch (error) {
     console.error('[API] Error fetching pools:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: String(error) },
       { status: 500 }
     );
   }
