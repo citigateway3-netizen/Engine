@@ -13,8 +13,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Next.js Template",
-  description: "A minimal Next.js starter template",
+  title: "AI Workflow Agent | pump.fun + Code + Research",
+  description:
+    "AI-powered workflow agent with real-time pump.fun token tracking, code writing, and deep research capabilities. Built with Vercel AI SDK and Convex Agent.",
+  keywords: [
+    "AI agent",
+    "pump.fun",
+    "Solana",
+    "meme coins",
+    "code writer",
+    "research agent",
+    "workflow automation",
+  ],
 };
 
 export default function RootLayout({
@@ -23,9 +33,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-950 text-white`}
       >
         {children}
       </body>

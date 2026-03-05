@@ -1,10 +1,14 @@
-# Active Context: Next.js Starter Template
+# Active Context: AI Workflow Agent
 
 ## Current State
 
-**Template Status**: ✅ Ready for development
+**Project Status**: ✅ AI Workflow Agent Built
 
-The template is a clean Next.js 16 starter with TypeScript and Tailwind CSS 4. It's ready for AI-assisted expansion to build any type of application.
+The project has been transformed from a Next.js starter template into a full AI workflow agent application with:
+- Real-time pump.fun token launch tracking
+- AI code writing agent (GPT-4o)
+- AI research agent (Claude)
+- AI workflow orchestration agent (GPT-4o)
 
 ## Recently Completed
 
@@ -14,74 +18,70 @@ The template is a clean Next.js 16 starter with TypeScript and Tailwind CSS 4. I
 - [x] ESLint configuration
 - [x] Memory bank documentation
 - [x] Recipe system for common features
+- [x] Installed Vercel AI SDK v6 (@ai-sdk/openai, @ai-sdk/anthropic, @ai-sdk/react, ai)
+- [x] Installed Convex + @convex-dev/agent for persistent agent threads
+- [x] Installed lucide-react, react-markdown, react-syntax-highlighter
+- [x] Created Convex schema (tokenLaunches, agentSessions tables)
+- [x] Created Convex agent definitions (codeAgent, researchAgent, workflowAgent)
+- [x] Created Convex functions for agent sessions and token management
+- [x] Created `/api/chat` route using Vercel AI SDK streamText + TextStreamChatTransport
+- [x] Created `/api/tokens` route fetching pump.fun API with mock fallback
+- [x] Created `TokenCard` component with risk assessment, social links, copy mint
+- [x] Created `TokenFeed` component with live polling, filters, sorting
+- [x] Created `AgentChat` component with 3 agent modes (workflow/code/research)
+- [x] Created main dashboard page with split-panel layout
+- [x] TypeScript: 0 errors
+- [x] ESLint: 0 errors, 0 warnings
 
 ## Current Structure
 
 | File/Directory | Purpose | Status |
 |----------------|---------|--------|
-| `src/app/page.tsx` | Home page | ✅ Ready |
-| `src/app/layout.tsx` | Root layout | ✅ Ready |
-| `src/app/globals.css` | Global styles | ✅ Ready |
+| `src/app/page.tsx` | Main dashboard with split panel | ✅ Ready |
+| `src/app/layout.tsx` | Root layout with dark theme | ✅ Ready |
+| `src/app/globals.css` | Global styles + animations | ✅ Ready |
+| `src/app/api/chat/route.ts` | AI streaming chat API | ✅ Ready |
+| `src/app/api/tokens/route.ts` | pump.fun token fetcher | ✅ Ready |
+| `src/components/AgentChat.tsx` | AI chat interface (3 agents) | ✅ Ready |
+| `src/components/TokenCard.tsx` | Token display card | ✅ Ready |
+| `src/components/TokenFeed.tsx` | Live token feed | ✅ Ready |
+| `convex/schema.ts` | Database schema | ✅ Ready |
+| `convex/agents.ts` | Agent definitions | ✅ Ready |
+| `convex/agentFunctions.ts` | Convex agent actions | ✅ Ready |
+| `convex/tokens.ts` | Token CRUD functions | ✅ Ready |
+| `convex/convex.config.ts` | Convex app config | ✅ Ready |
+| `.env.local.example` | Environment variables template | ✅ Ready |
 | `.kilocode/` | AI context & recipes | ✅ Ready |
 
-## Current Focus
+## Architecture
 
-The template is ready. Next steps depend on user requirements:
+### Frontend (Next.js App Router)
+- **Dashboard**: Split panel - left (token feed) + right (AI chat)
+- **Token Feed**: Real-time polling every 15s from pump.fun API
+- **AI Chat**: 3 agent modes with streaming responses
 
-1. What type of application to build
-2. What features are needed
-3. Design/branding preferences
+### AI Agents (Vercel AI SDK v6)
+- **Workflow Agent**: GPT-4o - orchestrates complex tasks
+- **Code Agent**: GPT-4o - writes code in any language
+- **Research Agent**: Claude Sonnet - deep research & analysis
 
-## Quick Start Guide
+### Backend (Convex)
+- **Real-time DB**: Token launches, agent sessions
+- **Agent Framework**: @convex-dev/agent for persistent threads
+- **API**: pump.fun integration with mock fallback
 
-### To add a new page:
+## Environment Variables Required
 
-Create a file at `src/app/[route]/page.tsx`:
-```tsx
-export default function NewPage() {
-  return <div>New page content</div>;
-}
 ```
-
-### To add components:
-
-Create `src/components/` directory and add components:
-```tsx
-// src/components/ui/Button.tsx
-export function Button({ children }: { children: React.ReactNode }) {
-  return <button className="px-4 py-2 bg-blue-600 text-white rounded">{children}</button>;
-}
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+NEXT_PUBLIC_CONVEX_URL=https://your-deployment.convex.cloud
+CONVEX_DEPLOY_KEY=prod:...
 ```
-
-### To add a database:
-
-Follow `.kilocode/recipes/add-database.md`
-
-### To add API routes:
-
-Create `src/app/api/[route]/route.ts`:
-```tsx
-import { NextResponse } from "next/server";
-
-export async function GET() {
-  return NextResponse.json({ message: "Hello" });
-}
-```
-
-## Available Recipes
-
-| Recipe | File | Use Case |
-|--------|------|----------|
-| Add Database | `.kilocode/recipes/add-database.md` | Data persistence with Drizzle + SQLite |
-
-## Pending Improvements
-
-- [ ] Add more recipes (auth, email, etc.)
-- [ ] Add example components
-- [ ] Add testing setup recipe
 
 ## Session History
 
 | Date | Changes |
 |------|---------|
 | Initial | Template created with base setup |
+| 2026-03-05 | Built full AI workflow agent with pump.fun tracker |
